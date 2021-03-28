@@ -1,2 +1,2 @@
 # android_crash
-Repository of our measurement code and data
+Repository of our measurement code and log data in part.
