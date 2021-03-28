@@ -1,5 +1,5 @@
 # dataset
-Here we present our measurement data of Android crash events.
+Here we present partial measurement data of Android crash events due to limited storage space.
 
 The attributes of each event are organized as follows:
 
