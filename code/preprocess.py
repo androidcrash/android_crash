@@ -3,13 +3,14 @@ import json
 class Stack(object):
     stack_arr = []
     id = ''
-    duplicated_stack=''
+    duplicated_stack_id=''
 
-    def __init__(self, id, frame_arr, duplicated_stack=None):
+    def __init__(self, id, frame_arr,duplicated_stack_id=None):
         self.id = id
         self.stack_arr = frame_arr
-        if duplicated_stack is not None:
-            self.duplicated_stack = duplicated_stack
+        if duplicated_stack_id is not None:
+            self.duplicated_stack_id = duplicated_stack_id
+
 
     def __len__(self):
         return len(self.stack_arr)
@@ -52,24 +53,11 @@ def load_stacks(stack_csv):
     stacks = []
     for line in lines:
         issue_id = line.split(',')[0]
-        duplicated_issue = line.split(',')[3]
-        duplicates_id = None
-        description = line.split(',')[5]
+        description = line.split(',')[1]
         ori_frames = stackTraceExtractor.find_stack_traces(description)
         frames = []
         if len(ori_frames) is 0:
             continue
-        if len(duplicated_issue) is not 0:
-            duplicates_ids = duplicated_issue.split('.')
-            dps = []
-            for dp_id in duplicates_ids:
-                if dp_id == '0':
-                    continue
-                dps.append(dp_id)
-            duplicates_id = ','.join(dps)
-            if len(duplicates_ids) > 2:
-                print duplicates_id
-                exit(0)
             
         for ori_frame in ori_frames:
             frame_dict = dict()
@@ -77,7 +65,7 @@ def load_stacks(stack_csv):
             frame_dict['file'] = ori_frame[1].split(':')[0]
             frame = Frame(frame_dict)
             frames.append(frame)
-        stack = Stack(issue_id, frames, duplicates_id)
+        stack = Stack(issue_id, frames)
         stacks.append(stack)
     return stacks
 
@@ -87,7 +75,7 @@ def save_json(output_json, stacks):
         for stack in stacks:
             stack_dict = dict()
             stack_dict['stack_id'] = stack.id
-            stack_dict['duplicated_stack'] = stack.duplicated_stack
+            stack_dict['duplicated_stack'] = stack.duplicated_stack_id
             stack_dict['stack_arr'] = []
             for frame in stack.stack_arr:
                 frame_dict = dict()
@@ -110,49 +98,17 @@ def same_filter(stacks):
     for i, stack in enumerate(stacks):
         for j in range(i + 1, len(stacks)):
             if compare_stack(stack, stacks[j]):
-                if stack.duplicated_stack in duplicated_stack_arr:
-                    continue
-                if len(stack.duplicated_stack) != 0:
-                    continue
                 duplicated_stack_arr.append(stack.id)
-                stacks[j].duplicated_stack = stack.id
+                stacks[j].duplicated_stack_id = stack.id
     return stacks
-        
-def preprocess(stacks):
 
-    real_buckets = []
-
-    for stack in stacks:
-        found = False
-        for bucket in real_buckets:
-            if stack.id in bucket and stack.duplicated_stack in bucket:
-                found = True
-                break
-            if stack.id not in bucket and stack.duplicated_stack not in bucket:
-                continue
-                # real_buckets.append([stack.id])
-            if stack.id in bucket:
-                for d_stack in stacks:
-                    if d_stack.id == stack.duplicated_stack:
-                        bucket.append(d_stack.id)
-            else:
-                bucket.append(stack.id)
-            found = True
-        if not found:
-            real_buckets.append([stack.id])
-            for d_stack in stacks:
-                if d_stack.id == stack.duplicated_stack:
-                    real_buckets[-1].append(d_stack.id)
-    return real_buckets
 def process_csv():
     input_arr = ['*.csv']
     output_arr = ['*.json']
 
     for index, input_csv in enumerate(input_arr):
         stacks = load_stacks(input_csv)
-        print len(preprocess(stacks))
         stacks = same_filter(stacks)
-        print len(preprocess(stacks))
         save_json(output_arr[index], stacks)
         
 if __name__ == "__main__":
