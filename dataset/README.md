@@ -1,5 +1,5 @@
 # dataset
-Here we present partial measurement data of Android crash events due to limited storage space.
+Here we present measurement data of about 10K Android crash events.
 
 The attributes of each event are organized as follows:
 
