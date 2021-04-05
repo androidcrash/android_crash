@@ -1,6 +1,10 @@
 # Code Repository
 ## Monitor Infrastructure
    The monitor infrastructure is implemented in [CrashCapturer.zip](https://github.com/androidcrash/android_crash/blob/main/code/CrashCapturer.zip). In practice, our CrashCapturer references an open source crash collection framework (xCrash on github)
+### Build
+   If you want to build CrashCapturer from source code. Follow this guide:
+      ./gradlew :crashcapturer_lib:build 
+   
 ## Root Cause Analysis Pipeline
    Our root cause analysis pipeline is implemented based on [preprocess.py](https://github.com/androidcrash/android_crash/blob/main/code/preprocess.py) and [clustering.py](https://github.com/androidcrash/android_crash/blob/main/code/clustering.py). Here, our analysis algorithm references the [ReBucket](https://www.microsoft.com/en-us/research/publication/rebucket-a-method-for-clustering-duplicate-crash-reports-based-on-call-stack-similarity/) algorithm.
    
