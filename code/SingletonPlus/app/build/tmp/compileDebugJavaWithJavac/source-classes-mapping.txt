@@ -1,0 +1,8 @@
+com/example/singletonplus/BuildConfig.java
+ com.example.singletonplus.BuildConfig
+com/example/singletonplus/SingletonPlus.java
+ com.example.singletonplus.SingletonPlus
+ com.example.singletonplus.SingletonPlus$STATES
+com/example/singletonplus/MainActivity.java
+ com.example.singletonplus.MainActivity
+ com.example.singletonplus.MainActivity$MySingleton
