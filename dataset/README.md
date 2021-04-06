@@ -1,28 +1,16 @@
 # dataset
-Here we present measurement data of about 10K Android crash events.
+Here we have provided some measurement data of Android crash events.  
 
 The attributes of each event are organized as follows:
 
-* issue_id
+|  Attributes   | Description  |
+|  ----  | ----  |
+| issue_id  |  ID generated to identify an app crash event. |
+| os_version  | Android version. |
+| device_id  | Unique ID generated to identify a user's device which the reported event crashed on. |
+| crash_time  | Time when the reported crash event occured on the device. |
+| crash_reason  | A brief summary of the crash reason of the reported event. |
+| crash_type  | Type of throwing Exception/Error. |
 
-  The ID of the event.
 
-* os_version
 
-  The Android version.
-
-* crash_time
-
-   The crash time of the event.
-
-* device_id
-
-  The ID of the device the reported event crashed on.
-
-* abstract
-
-  A brief summary of the crash reason of the reported event.
-
-* crash_exception
-
-  The type of the event.
