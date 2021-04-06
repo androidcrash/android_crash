@@ -1,4 +1,4 @@
-﻿issue_id,os_version,crash_time,device_id,crash_reason,crash_exception
+﻿issue_id,os_version,crash_time,device_id,crash_reason,crash_type
 00152e349ad90e4805dd0409d919c6e1,5,1602937624,34674130034,Failed to allocate a 408 byte allocation with 16777216 free bytes and 72MB until OOM; failed due to fragmentation (required continguous free 32768 bytes for a new buffer where largest contiguous free 28672 bytes),java.lang.OutOfMemoryError
 0019c5ce0436ed472593b2d5aeb950f4,6,1604235034,53637961624,Failed to allocate a 556994600 byte allocation with 8338896 free bytes and 486MB until OOM,java.lang.OutOfMemoryError
 0026bd8d0fe7da9a6575af463dd82d26,5,1600517551,46918117084,Failed to allocate a 36876 byte allocation with 4818 free bytes and 4KB until OOM,java.lang.OutOfMemoryError
