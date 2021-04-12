@@ -8,6 +8,7 @@ from scipy.cluster.hierarchy import linkage, dendrogram, fcluster, fclusterdata
 from multiprocessing import Pool
 from multiprocessing import Pool as ThreadPool
 import threadpool
+import difflib
 
 STACK = None
 BUCKETS = []
@@ -40,6 +41,12 @@ class Frame(object):
             self.symbol = frame['symbol']
             self.file = frame['file']
 
+def string_similar(s1,s2,fuzzing):
+    if fuzzing == True:
+        return difflib.SequenceMatcher(None, s1, s2).quick_ratio()
+    else:
+        return (s1 == s2)
+    
 def load_stack_feature(stack_json):
     with open(stack_json) as f:
         apm_dict = json.load(f)
@@ -92,7 +99,7 @@ def get_dist(stack1, stack2, c, o):
     
     for i in xrange(1, len(stack1) + 1):
         for j in xrange(1, len(stack2) + 1):
-            if stack1[i - 1].symbol == stack2[j - 1].symbol:
+            if string_similar(stack1[i - 1].symbol,stack2[j - 1].symbol,True) >0.8:
                 x = (math.e ** (-c * min(i-1, j-1))) * (math.e ** (-o * abs(i-j)))
             else:
                 x = 0.
