@@ -46,24 +46,6 @@ def string_similar(s1,s2,fuzzing):
         return difflib.SequenceMatcher(None, s1, s2).quick_ratio()
     else:
         return (s1 == s2)
-    
-def load_stack_feature(stack_json):
-    with open(stack_json) as f:
-        apm_dict = json.load(f)
-    all_stack = []
-    for _hits_item in apm_dict['hits']['hits']:
-        if _hits_item['_source']['feature'] is None:
-            continue
-        frames = _hits_item['_source']['feature'][0]['frame']
-
-        stack_id = _hits_item['_id']
-        stack_arr = []
-        for frame_dict in frames:
-            frame = Frame(frame_dict)
-            stack_arr.append(frame)
-        stack = Stack(stack_id, stack_arr)
-        all_stack.append(stack)
-    return all_stack
 
 def load_stack_stack(stack_json):
     with open(stack_json) as f:
@@ -83,9 +65,6 @@ def load_stack_stack(stack_json):
         stack = Stack(stack_id, stack_arr)
         all_stack.append(stack)
     return all_stack
-
-def load_buckets(bucket_json):
-    return []
 
 def get_dist(stack1, stack2, c, o):
     stack_len1 = len(stack1)
@@ -126,24 +105,9 @@ def clustering(all_stack, cal, org, dist):
     bucket.sort()
     return bucket
 
-def similar_stack(all_stack, buckets, cal, org, dist):
+def similar_stack(all_stack, cal, org, dist):
     return clustering(all_stack, cal, org, dist)
 
-def write_buckets(buckets, bucket_file):
-    buckets_array = []
-    for bucket in buckets:
-        stack_arr = []
-        for stack in bucket:
-            stack_dict = dict()
-            frame_arr = []
-            for frame in stack.stack_arr:
-                frame_arr.append(frame.symbol)
-            stack_dict[stack.id] = frame_arr
-            stack_arr.append(stack_dict)
-        buckets_array.append(stack_arr)
-    buckets_json = json.dumps(buckets_array)
-    with open(bucket_file, 'w') as f:
-        json.dump(buckets_json, f)
 
 
 def main():
@@ -155,9 +119,7 @@ def main():
         stack = load_stack_stack(json_file)
         all_stack += stack
     print "Clustering"
-    buckets = load_buckets(bucket_json)
-    new_buckets = similar_stack(all_stack, buckets, 0.0, 0.0, 0.1)
-    write_buckets(new_buckets, bucket_json)
+    new_buckets = similar_stack(all_stack, 0.04, 0.12, 0.1)
 
 
 if __name__ == "__main__":
