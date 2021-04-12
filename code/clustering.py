@@ -104,28 +104,6 @@ def get_dist(stack1, stack2, c, o):
     sim = M[stack_len1][stack_len2] / sig
     return 1 - sim
 
-def stack_prefix(stack1, stack2, num):
-    for i in range(0, num):
-        if i >= len(stack1.stack_arr) or i >= len(stack2.stack_arr):
-            return False
-        if stack1.stack_arr[i].symbol != stack2.stack_arr[i].symbol:
-            return False
-    return True
-    
-def prefix_match(all_stack):
-    prefix = 4
-    buckets = []
-    for stack in all_stack:
-        found = False
-        for bucket in buckets:
-            if stack_prefix(bucket[0], stack, prefix):
-                bucket.append(stack)
-                found = True
-        if not found:
-            buckets.append([stack])
-    return buckets
-
-
 def clustering(all_stack, cal, org, dist):
     sim = []
     for i in range(len(all_stack) - 1):
@@ -160,101 +138,6 @@ def write_buckets(buckets, bucket_file):
     with open(bucket_file, 'w') as f:
         json.dump(buckets_json, f)
 
-def cal_dist(index):
-    cal = 0.05
-    org = 0.14
-    global STACK
-    sim = get_dist(STACK, BUCKETS[index][0], cal, org)
-    res_list[index] = sim
-
-def cal_dist_process(stack1, stack2, index):
-    cal = 0.05
-    org = 0.14
-    sim = get_dist(stack1, stack2, cal, org)
-    return (index, sim)
-
-def single_pass_clustering_2(stack, c, o, dist):
-    global res_list
-    for i in range(0, len(res_list)):
-        res_list[i] = 1.0
-
-    requests = threadpool.makeRequests(cal_dist, [([index, stack], None) for index in range(0, len(BUCKETS))])
-    [task_pool.putRequest(req) for req in requests]
-    task_pool.wait()
-    if len(BUCKETS) is 0:
-        BUCKETS.append([stack])
-        return
-    min_sim = min(list(res_list))
-    if min_sim <= dist:
-        min_idx = res_list.index(min_sim)
-        BUCKETS[min_idx].append(stack)
-    else:
-        BUCKETS.append([stack])
-
-def single_pass_clustering_3(stack, c, o, dist):
-    global res_list
-    for i in range(0, len(res_list)):
-        res_list[i] = 1.0
-    global STACK
-    STACK = stack
-    mypool = ThreadPool(8)
-    mypool.map(cal_dist,[i for i in range(0,len(BUCKETS))])
-    mypool.close()
-    mypool.join()
-
-    if len(BUCKETS) is 0:
-        BUCKETS.append([stack])
-        return
-    min_sim = min(list(res_list))
-    if min_sim <= dist:
-        min_idx = res_list.index(min_sim)
-        BUCKETS[min_idx].append(stack)
-    else:
-        BUCKETS.append([stack])
-
-def single_pass_clustering_4(stack, c, o, dist):
-    global res_list
-    for i in range(0, len(res_list)):
-        res_list[i] = 1.0
-    pool = Pool(processes=4)
-    result = []
-    for i in range(0, len(BUCKETS)):
-        result.append(pool.apply_async(cal_dist_process, (stack,BUCKETS[i],i)))
-    pool.close()
-    pool.join()
-    for res in result:
-        res_list[res.get()[0]] = res.get()[1]
-
-    if len(BUCKETS) is 0:
-        BUCKETS.append([stack])
-        return
-    min_sim = min(list(res_list))
-    if min_sim <= dist:
-        min_idx = res_list.index(min_sim)
-        BUCKETS[min_idx].append(stack)
-    else:
-        BUCKETS.append([stack])
-
-
-def single_pass_clustering(stack, c, o, dist):
-    found = False
-    min = -1
-    min_sim = -1
-    for i, bucket in enumerate(BUCKETS):
-        sim = get_dist(stack, bucket[0], c, o)
-        if sim < min_sim:
-            min_sim = sim
-            min = i
-        if sim < dist:
-            bucket.append(stack)
-            found = True
-            min = i
-            min_sim = sim
-    if found is not True:
-        BUCKETS.append([stack])
-
-def query(stack):
-    print "Got"
 
 def main():
     stack_json_dir = 'data'
@@ -269,14 +152,6 @@ def main():
     new_buckets = similar_stack(all_stack, buckets, 0.0, 0.0, 0.1)
     write_buckets(new_buckets, bucket_json)
 
-    print "single_pass_clustering..."
-    for stack in all_stack:
-        single_pass_clustering(stack, 0.0, 0.0, 0.1)
-    print "We have " + str(len(BUCKETS)) + " buckets Now"
-
-    print "prefix_match..."
-    prefix_buckets = prefix_match(all_stack)
-    print "We have " + str(len(prefix_buckets)) + " buckets Now"
 
 if __name__ == "__main__":
     main()
