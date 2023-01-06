@@ -1,14 +1,2 @@
 # AppCrash
-这是一个测试安卓系统中存在崩溃线程（进程）的app。
-## 特点
-1）通过进程死锁模拟实体机上的崩溃  
-2）通过全遍历算法和集合启发式算法检测崩溃现象  
-3）实时显示计算检测的结果和时间  
-## 项目结构
-由于项目较为简单，主要代码在app/src/main文件夹下，其中：  
-1）Utils.java: 包含一些功能函数  
-2）MainActivity.java: 包含锁、资源、测试进程崩溃的类以及程序安卓程序入口类    
-具体功能细节请看代码注释  
-## 项目构建
-1）推荐使用Android Studio打包app  
-2）您也可以运行使用在app/release下打包好的app  
+our heuristic testing algorithm is more helpful to achieve an effective testing of multiple processes for developers. Developers could use our operable process pool to replace the classic process pool at the debugging phase, and revert them at the releasing phase. However, if an app doesn’t apply process pools, it is better to use the classic UI interaction test for offline testing.
